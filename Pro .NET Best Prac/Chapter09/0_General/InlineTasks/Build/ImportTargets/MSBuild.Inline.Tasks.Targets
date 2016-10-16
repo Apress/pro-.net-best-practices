@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+         ToolsVersion="4.0">
+  <PropertyGroup>
+    <MSBuildInlineTasksPath Condition="'$(MSBuildInlineTasksPath)' == ''">.\Build\ImportTargets</MSBuildInlineTasksPath>
+  </PropertyGroup>
+
+  <UsingTask TaskName="ExecuteSum"
+             TaskFactory="CodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" >
+    <ParameterGroup>
+      <Input Required="true"/>
+      <TaskMessage ParameterType="System.Decimal" Output="true"/>
+    </ParameterGroup>
+
+    <Task>
+      <Code Type="Fragment" Language="cs">
+        const string Separators = ",;|";
+        var sum = decimal.Zero;
+
+        if (!string.IsNullOrWhiteSpace(Input))
+        {
+        foreach (var value in Input.Split(Separators.ToCharArray()))
+        {
+        decimal decimalValue;
+
+        if (decimal.TryParse(value, out decimalValue))
+        {
+        sum += decimalValue;
+        }
+        }
+        }
+
+        TaskMessage = sum;
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <UsingTask TaskName="Minimum"
+             TaskFactory="CodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" >
+    <ParameterGroup>
+      <Input Required="true"/>
+      <Result ParameterType="System.Decimal" Output="true"/>
+    </ParameterGroup>
+
+    <Task>
+      <Code Type="Fragment" Language="cs">
+        const string Separators = ",;|";
+        var values = new List&lt;decimal&gt;();
+
+        if (!string.IsNullOrWhiteSpace(Input))
+        {
+        foreach (var valueAsString in Input.Split(Separators.ToCharArray()))
+        {
+        decimal value;
+        if (decimal.TryParse(valueAsString, out value))
+        {
+        values.Add(value);
+        }
+        }
+        }
+
+        Result = values.Min();
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <UsingTask TaskName="ReportFullPath"
+             TaskFactory="CodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" >
+    <ParameterGroup>
+      <Input ParameterType="Microsoft.Build.Framework.ITaskItem[]"/>
+    </ParameterGroup>
+
+    <Task>
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+          foreach (var file in Input)
+          {
+            var fileInfo = 
+            new FileInfo(file.GetMetadata("FullPath"));
+
+            Log.LogMessage(
+                "{0} => path: {1}",
+                fileInfo.Name,
+                fileInfo.FullName);
+          }
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+</Project>

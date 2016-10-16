@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+         ToolsVersion="4.0"
+         >
+  <PropertyGroup>
+    <ArtifactsPath Condition="'$(ArtifactsPath)'==''">.\Artifacts</ArtifactsPath>
+    <BinariesOutputPath Condition="'$(BinariesOutputPath)'==''">$(ArtifactsPath)\Binaries</BinariesOutputPath>
+  </PropertyGroup>
+
+  <Target Name="Preconditions" >
+    <Error Condition="'$(FxCopRoot)'==''"
+           Text="Environment variable 'FxCopRoot' must be set."
+           />
+    <Message Text="FxCop root: '$(FxCopRoot)'"
+             Importance="low"
+             />
+    <MakeDir Condition="!Exists('$(ArtifactsPath)')"
+             Directories="$(ArtifactsPath)"
+             />
+    <MakeDir Condition="!Exists('$(BinariesOutputPath)')"
+             Directories="$(BinariesOutputPath)"
+             />
+  </Target>
+</Project>

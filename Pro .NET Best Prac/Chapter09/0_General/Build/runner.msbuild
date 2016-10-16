@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="BuildAll"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+         ToolsVersion="4.0">
+
+  <ItemGroup>
+    <ProjectToBuild Include=".\Lender.Slos.Financial\Lender.Slos.Financial.csproj" />
+    <ProjectToBuild Include=".\Tests.Unit.Lender.Slos.Financial\Tests.Unit.Lender.Slos.Financial.csproj" />
+  </ItemGroup>
+
+  <Target Name="BuildAll">
+    <MSBuild Projects="@(ProjectToBuild)"
+             Targets="Build"
+             Properties="Configuration=DEBUG"
+             />
+  </Target>
+</Project>
